@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="https://cyluk.com/logo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Galaxia - Cyluk</title>
+    <meta name="author" content="Cyluk" />
+    <meta name="copyright" content="Todos los derechos reservados Cyluk - https://github.com/Cyluk-dev/Galaxia" />
+    
+    <style>
+      .modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          background: rgba(0, 0, 0, 0.7);
+          z-index: 200000;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.3s ease-in-out;
+      }
+      .modal-content {
+          background: rgba(20, 10, 30, 0.75);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          border: 1px solid rgba(0, 234, 255, 0.4);
+          box-shadow: 0 0 25px rgba(0, 234, 255, 0.3);
+          padding: 24px;
+          border-radius: 20px;
+          width: min(340px, 85vw);
+          text-align: center;
+          color: #fff;
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          transform: scale(0.8);
+          transition: transform 0.3s ease-in-out;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+      }
+      .modal-overlay.active {
+          opacity: 1;
+          pointer-events: all;
+      }
+      .modal-overlay.active .modal-content {
+          transform: scale(1);
+      }
+      .sticker-img {
+          width: 130px;
+          height: 130px;
+          object-fit: contain;
+          margin-bottom: 15px;
+          filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.15));
+      }
+      .modal-text {
+          font-size: 15px;
+          line-height: 1.6;
+          color: #ffb3d9;
+          text-shadow: 0 0 5px rgba(255, 0, 170, 0.5);
+          margin-bottom: 20px;
+      }
+      .close-modal-btn {
+          background: rgba(0, 234, 255, 0.15);
+          border: 1px solid #00eaff;
+          color: #8ff8ff;
+          padding: 8px 24px;
+          border-radius: 999px;
+          cursor: pointer;
+          font-weight: 600;
+          transition: background 0.2s;
+          font-family: 'Segoe UI', sans-serif;
+      }
+      .close-modal-btn:hover {
+          background: rgba(0, 234, 255, 0.3);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    
+    <audio
+      id="bg-music"
+      src="https://github.com/Baque2005/Organizador/raw/refs/heads/master/Harry%20Styles%20-%20As%20It%20Was%20(Lyrics).mp3"
+      autoplay
+      loop
+      preload="auto"
+      playsinline
+    ></audio>
+
+    <div id="starModal" class="modal-overlay">
+        <div class="modal-content">
+            <img id="modalSticker" src="" alt="Sticker" class="sticker-img" />
+            <div id="modalText" class="modal-text"></div>
+            <button id="closeModal" class="close-modal-btn">Cerrar ✕</button>
+        </div>
+    </div>
+
+    <button
+      id="player-visibility-btn"
+      type="button"
+      aria-label="Mostrar u ocultar reproductor"
+      style="
+        position: fixed;
+        top: 12px;
+        right: 12px;
+        z-index: 100000; 
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: 1px solid rgba(0,234,255,0.8);
+        background: rgba(0, 0, 0, 0.65);
+        color: #8ff8ff;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 10px rgba(0,234,255,0.4);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        transition: transform 0.2s, background 0.2s;
+        padding: 0;
+        margin: 0;
+      "
+    >
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+    </button>
+
+    <div
+      id="music-bar"
+      style="
+        position: fixed;
+        top: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 99999;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: min(420px, calc(100vw - 24px));
+        padding: 8px 14px;
+        border-radius: 16px;
+        border: 1px solid #00eaff;
+        box-shadow: 0 0 10px rgba(0,234,255,0.5), 0 0 20px rgba(0,234,255,0.25);
+        background: rgba(0, 0, 0, 0.75);
+        color: #fff;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease;
+      "
+    >
+      <button
+        id="music-toggle"
+        type="button"
+        aria-label="Pausar musica"
+        style="
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          border: 1px solid rgba(0,234,255,0.8);
+          background: rgba(0,234,255,0.14);
+          color: #8ff8ff;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 0 8px rgba(0,234,255,0.45);
+          flex-shrink: 0;
+          padding: 0;
+          margin: 0;
+        "
+      ></button>
+
+      <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px;">
+        <div
+            id="lyricsDisplay"
+            style="
+                font-size: 12px;
+                font-weight: 600;
+                color: #8ff8ff;
+                text-align: center;
+                transition: opacity 0.25s ease-in-out, color 0.25s ease-in-out;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                letter-spacing: 0.5px;
+                padding-bottom: 2px;
+            "
+        >🎶 As It Was - Harry Styles 🎶</div>
+
+        <input
+          id="music-progress"
+          type="range"
+          min="0"
+          max="100"
+          step="0.1"
+          value="0"
+          aria-label="Progreso de la musica"
+          style="
+            width: 100%; 
+            height: 3px;
+            accent-color: #00eaff; 
+            cursor: pointer; 
+            margin: 0;
+            padding: 0;
+          "
+        />
+        <div style="display: flex; justify-content: space-between; font-size: 10px; opacity: 0.7; margin-top: 1px;">
+          <span id="music-current">0:00</span>
+          <span id="music-total">0:00</span>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        const audio = document.getElementById("bg-music");
+        const button = document.getElementById("music-toggle");
+        const progress = document.getElementById("music-progress");
+        const current = document.getElementById("music-current");
+        const total = document.getElementById("music-total");
+        const lyricsEl = document.getElementById("lyricsDisplay");
+        const visibilityBtn = document.getElementById("player-visibility-btn");
+        const musicBar = document.getElementById("music-bar");
+        let isPlayerVisible = true;
+
+        if (!audio || !button || !progress || !current || !total || !visibilityBtn || !musicBar) return;
+
+        const iconPlay = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="margin-left: 2px;"><path d="M8 5v14l11-7z"/></svg>`;
+        const iconPause = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
+
+        const lyricsData = [
+            { start: 0.0,   end: 4.0,   text: "🎶 (Vamos, Harry, queremos darte las buenas noches) 🎶" },
+            { start: 14.0,  end: 16.1,  text: "🎶 Reteniéndome 🎶" },
+            { start: 16.1,  end: 18.8,  text: "🎶 La gravedad me está reteniendo 🎶" },
+            { start: 18.8,  end: 21.5,  text: "🎶 Quiero que extiendas la palma de tu mano 🎶" },
+            { start: 21.5,  end: 25.0,  text: "🎶 ¿Por qué no lo dejamos así? 🎶" },
+            { start: 25.0,  end: 26.9,  text: "🎶 Nada que decir 🎶" },
+            { start: 26.9,  end: 29.7,  text: "🎶 Cuando todo se pone de por medio 🎶" },
+            { start: 29.7,  end: 32.4,  text: "🎶 Parece que no puedes ser reemplazada 🎶" },
+            { start: 32.4,  end: 37.4,  text: "🎶 Y yo soy el que se quedará, oh, oh, oh 🎶" },
+            { start: 37.4,  end: 44.0,  text: "🎶 En este mundo, solo somos nosotros 🎶" },
+            { start: 44.0,  end: 48.4,  text: "🎶 Sabes que no es lo mismo que era antes 🎶" },
+            { start: 48.4,  end: 55.0,  text: "🎶 En este mundo, solo somos nosotros 🎶" },
+            { start: 55.0,  end: 59.9,  text: "🎶 Sabes que no es lo mismo que era antes 🎶" },
+            { start: 59.9,  end: 66.5,  text: "🎶 Como era antes, como era antes 🎶" },
+            { start: 66.5,  end: 69.1,  text: "🎶 Sabes que no es lo mismo 🎶" },
+            { start: 69.1,  end: 71.1,  text: "🎶 Responde el teléfono 🎶" },
+            { start: 71.1,  end: 74.0,  text: "🎶 Harry, no eres bueno estando solo 🎶" },
+            { start: 74.0,  end: 76.7,  text: "🎶 ¿Por qué estás sentado en el suelo de casa? 🎶" },
+            { start: 76.7,  end: 79.6,  text: "🎶 ¿Qué clase de pastillas estás tomando? 🎶" },
+            { start: 79.6,  end: 82.2,  text: "🎶 Tocando el timbre 🎶" },
+            { start: 82.2,  end: 84.9,  text: "🎶 Y nadie viene a ayudar 🎶" },
+            { start: 84.9,  end: 87.6,  text: "🎶 Tu papá vive solo 🎶" },
+            { start: 87.6,  end: 92.5,  text: "🎶 Él solo quiere saber que estás bien, oh, oh, oh 🎶" },
+            { start: 92.5,  end: 99.1,  text: "🎶 En este mundo, solo somos nosotros 🎶" },
+            { start: 99.1,  end: 103.6, text: "🎶 Sabes que no es lo mismo que era antes 🎶" },
+            { start: 103.6, end: 110.2, text: "🎶 En este mundo, solo somos nosotros 🎶" },
+            { start: 110.2, end: 115.2, text: "🎶 Sabes que no es lo mismo que era antes 🎶" },
+            { start: 115.2, end: 121.1, text: "🎶 Como era antes, como era antes 🎶" },
+            { start: 121.1, end: 124.4, text: "🎶 Sabes que no es lo mismo 🎶" },
+            { start: 124.4, end: 127.0, text: "🎶 Ve a casa, sal adelante, internet a velocidad de luz 🎶" },
+            { start: 127.0, end: 129.9, text: "🎶 No quiero hablar de cómo era antes 🎶" },
+            { start: 129.9, end: 132.6, text: "🎶 Deja América, dos niños la siguen 🎶" },
+            { start: 132.6, end: 143.1, text: "🎶 No quiero hablar de quién lo hace primero 🎶" },
+            { start: 143.1, end: 146.0, text: "🎶 Como era antes 🎶" },
+            { start: 146.0, end: 151.0, text: "🎶 Sabes que no es lo mismo que era antes 🎶" },
+            { start: 151.0, end: 154.0, text: "🎶 Como era antes, como era antes 🎶" },
+            { start: 154.0, end: 167.0, text: "🎶 🎧🎸🥰 🎶" }
+        ];
+
+        const formatTime = (seconds) => {
+          if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
+          const mins = Math.floor(seconds / 60);
+          const secs = Math.floor(seconds % 60).toString().padStart(2, "0");
+          return `${mins}:${secs}`;
+        };
+
+        const updateLabel = () => {
+          button.innerHTML = audio.paused ? iconPlay : iconPause;
+          button.setAttribute("aria-label", audio.paused ? "Reproducir musica" : "Pausar musica");
+        };
+
+        const updateProgress = () => {
+          const duration = Number.isFinite(audio.duration) ? audio.duration : 0;
+          const currentTime = Number.isFinite(audio.currentTime) ? audio.currentTime : 0;
+          const percent = duration > 0 ? (currentTime / duration) * 100 : 0;
+          progress.value = String(percent);
+          current.textContent = formatTime(currentTime);
+          total.textContent = formatTime(duration);
+        };
+
+        const updateLyrics = () => {
+          if (!lyricsEl) return;
+          const currentTime = audio.currentTime;
+          const activeLyric = lyricsData.find(item => currentTime >= item.start && currentTime <= item.end);
+          
+          if (activeLyric) {
+              lyricsEl.textContent = activeLyric.text;
+              lyricsEl.style.color = '#ffb3d9'; 
+              lyricsEl.style.textShadow = '0 0 8px rgba(255, 0, 170, 0.8)';
+          } else {
+              lyricsEl.textContent = "🎶 As It Was - Harry Styles 🎶";
+              lyricsEl.style.color = '#8ff8ff'; 
+              lyricsEl.style.textShadow = 'none';
+          }
+        };
+
+        visibilityBtn.addEventListener("click", () => {
+          isPlayerVisible = !isPlayerVisible;
+          if (isPlayerVisible) {
+            musicBar.style.transform = "translateX(-50%) translateY(0px)";
+            musicBar.style.opacity = "1";
+            musicBar.style.pointerEvents = "all";
+            visibilityBtn.style.transform = "scale(1)";
+          } else {
+            musicBar.style.transform = "translateX(-50%) translateY(-70px)";
+            musicBar.style.opacity = "0";
+            musicBar.style.pointerEvents = "none";
+            visibilityBtn.style.transform = "scale(0.9)";
+          }
+        });
+
+        const tryAutoPlay = () => {
+          audio.play().then(() => {
+            updateLabel();
+            updateProgress();
+          }).catch(() => {
+            updateLabel();
+            updateProgress();
+          });
+        };
+
+        button.addEventListener("click", () => {
+          if (audio.paused) {
+            audio.play().then(() => {
+              updateLabel();
+              updateProgress();
+            }).catch(updateLabel);
+          } else {
+            audio.pause();
+            updateLabel();
+            updateProgress();
+          }
+        });
+
+        progress.addEventListener("input", () => {
+          if (!Number.isFinite(audio.duration) || audio.duration <= 0) return;
+          const ratio = Number(progress.value) / 100;
+          audio.currentTime = ratio * audio.duration;
+          updateProgress();
+        });
+
+        audio.addEventListener("timeupdate", updateProgress);
+        audio.addEventListener("timeupdate", updateLyrics);
+        audio.addEventListener("loadedmetadata", updateProgress);
+        audio.addEventListener("durationchange", updateProgress);
+        audio.addEventListener("play", updateLabel);
+        audio.addEventListener("pause", updateLabel);
+
+        const unlockOnce = () => {
+          if (audio.paused) {
+            audio.play().then(() => {
+              updateLabel();
+              updateProgress();
+            }).catch(updateLabel);
+          }
+          window.removeEventListener("pointerdown", unlockOnce);
+          window.removeEventListener("keydown", unlockOnce);
+        };
+
+        window.addEventListener("pointerdown", unlockOnce, { once: true });
+        window.addEventListener("keydown", unlockOnce, { once: true });
+
+        tryAutoPlay();
+        updateLabel();
+        updateProgress();
+
+        const modal = document.getElementById("starModal");
+        const modalText = document.getElementById("modalText");
+        const modalSticker = document.getElementById("modalSticker");
+        const closeModalBtn = document.getElementById("closeModal");
+
+        window.mostrarFraseLarga = function(texto, urlSticker) {
+            modalText.innerHTML = texto; 
+            modalSticker.src = urlSticker;
+            modal.classList.add("active");
+        };
+
+        closeModalBtn.addEventListener("click", () => {
+            modal.classList.remove("active");
+        });
+
+        modal.addEventListener("click", (e) => {
+            if(e.target === modal) {
+                modal.classList.remove("active");
+            }
+        });
+
+      })();
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

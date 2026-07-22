@@ -1,0 +1,14 @@
+/*!
+ * Copyright © Todos los derechos reservados Cyluk
+ * Repository: https://github.com/Cyluk-dev/Galaxia
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap');
+@import "tailwindcss";
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #000;
+}
