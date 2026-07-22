@@ -1,5 +1,5 @@
 <div align="center"> 
-  <img src="logo.webp" width="150" alt="Logo" style="margin-bottom: 20px;"/> 
+  <img src="logo.png" width="150" alt="Logo" style="margin-bottom: 20px;"/> 
   
   <h1 style="border-bottom: none; color: #1F2937; font-family: sans-serif; font-size: 2.5em; margin-bottom: 5px;"> 
     Galaxia: Procedural Universe 🌌
