@@ -18,7 +18,7 @@
   <img src="https://threejs.org/files/icon.png" width="80" alt="Three.js Logo"> 
   <h2 style="color: #1d4ed8; margin-top: 10px;">GALAXY GENERATOR & SHADER ENGINE</h2> 
   <p><b>Por sinnicke</b></p> 
-  <p><i>"El código es el lenguaje con el que escribimos las estrellas."</i></p> 
+  <p><i>"El universo es increible"</i></p> 
   
   <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React" />
   <img src="https://img.shields.io/badge/Three.js-000000?style=for-the-badge&logo=three.js&logoColor=white" alt="Three.js" />
@@ -78,4 +78,4 @@ npm install
 ### 2. Modo Desarrollo
 ```bash
 npm run dev
-```
+
