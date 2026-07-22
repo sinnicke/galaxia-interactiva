@@ -1,5 +1,5 @@
 <div align="center"> 
-  <img src="https://cyluk.com/logo.svg" width="150" alt="Logo" style="margin-bottom: 20px;"/> 
+  <img src="logo.webp" width="150" alt="Logo" style="margin-bottom: 20px;"/> 
   
   <h1 style="border-bottom: none; color: #1F2937; font-family: sans-serif; font-size: 2.5em; margin-bottom: 5px;"> 
     Galaxia: Procedural Universe 🌌
@@ -15,10 +15,10 @@
 </div> 
 
 <div align="center"> 
-  <img src="https://threejs.org/files/icon.png" width="80" alt="Three.js Logo"> 
+  <img src="https://upload.wikimedia.org/wikipedia/commons/3/3f/Three.js_Icon.svg" width="80" alt="Three.js Logo"> 
   <h2 style="color: #1d4ed8; margin-top: 10px;">GALAXY GENERATOR & SHADER ENGINE</h2> 
   <p><b>Por sinnicke</b></p> 
-  <p><i>"El universo es increible"</i></p> 
+  <p><i>"El universo es hermoso."</i></p> 
   
   <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React" />
   <img src="https://img.shields.io/badge/Three.js-000000?style=for-the-badge&logo=three.js&logoColor=white" alt="Three.js" />
@@ -78,4 +78,3 @@ npm install
 ### 2. Modo Desarrollo
 ```bash
 npm run dev
-
